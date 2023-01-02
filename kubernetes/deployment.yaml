@@ -1,0 +1,74 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment
+  labels:
+    app: nsl-client
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nsl-client
+
+  template:
+    metadata:
+      labels:
+        app: nsl-client
+
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: client
+          resources:
+            requests:
+              memory: 1Mi
+              cpu: 1m
+            limits:
+              memory: 500Mi
+              cpu: 1000m
+          image: 5h4k4r/nsl-client-with-oauth:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8888
+
+        # Backend for Frontend
+        - name: proxy
+          image: 5h4k4r/customized-oauth2-proxy:latest
+          # image: 5h4k4r/oauth2-proxy:latest
+          imagePullPolicy: Always
+          args:
+            - --alpha-config=/etc/oauth2-proxy/alpha-config.yaml
+          envFrom:
+            # ========================
+            # CONFIG MAPS
+            # ========================
+            - prefix: OAUTH2_PROXY_
+              configMapRef:
+                name: general-config
+
+            # ========================
+            # SECRETS
+            # ========================
+            - prefix: OAUTH2_PROXY_
+              secretRef:
+                name: proxy-secrets
+
+          resources:
+            requests:
+              memory: 1Mi
+              cpu: 1m
+            limits:
+              memory: 500Mi
+              cpu: 1000m
+          ports:
+            - containerPort: 4180
+          volumeMounts:
+            - mountPath: /etc/oauth2-proxy
+              name: proxy-config
+      volumes:
+        - name: proxy-config
+          configMap:
+            name: proxy-config

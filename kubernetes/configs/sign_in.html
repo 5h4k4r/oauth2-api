@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+    <title>Login</title>
+</head>
+
+<body>
+    <div class="card-container">
+        <div class="card">
+            <div class="card-content">
+                <h2 class="text-muted">
+                    <span class="title">PIS Insight</span>
+                </h2>
+
+                <h2 class="mt-3 title">Login to your account</h2>
+                <span class="text-muted content">PIS Insight is requesting authentication. If you have an active
+                    account,
+                    you will be redirected to log in to your account</span>
+                <form action="/auth/start">
+                    <button type="submit">
+                        Login
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        var buttons = document.getElementsByTagName('button');
+
+        Array.prototype.forEach.call(buttons, function (b) {
+            b.addEventListener('click', createRipple);
+        })
+
+        function createRipple(e) {
+            if (this.getElementsByClassName('ripple').length > 0) {
+                this.removeChild(this.childNodes[1]);
+            }
+
+            var circle = document.createElement('div');
+            this.appendChild(circle);
+
+            var d = Math.max(this.clientWidth, this.clientHeight);
+            circle.style.width = circle.style.height = d + 'px';
+
+            circle.style.left = e.clientX - this.offsetLeft - d / 2 + 'px';
+            circle.style.top = e.clientY - this.offsetTop - d / 2 + 'px';
+
+            circle.classList.add('ripple');
+        }
+    </script>
+    <style>
+        html,
+        body {
+            font-family: 'Roboto' !important;
+        }
+
+        button {
+            border: 0;
+            outline: 0;
+            color: white;
+            background-color: #3f51b5;
+            border-radius: 8px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            margin-top: 48px;
+            width: 100%;
+            padding: 12px 0px;
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        button .ripple {
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+            position: absolute;
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(2.5);
+                opacity: 0;
+            }
+        }
+
+
+        .card {
+            padding: 32px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: rgb(50 50 50 / 10%) 0px 0px 100px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .card-container {
+            padding-top: 20vh;
+            padding-bottom: 80px;
+        }
+
+        h2 {
+            font-weight: bold;
+        }
+
+        span.content {
+            font-size: .875rem;
+            display: block;
+        }
+
+        .text-muted {
+            color: #6c757d;
+        }
+
+        .title {
+            font-size: 30px;
+            font-weight: 900;
+        }
+
+    </style>
+
+</body>
+
+</html>

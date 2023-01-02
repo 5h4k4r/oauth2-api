@@ -1,0 +1,12 @@
+# generatorOptions:
+#   immutable: true
+
+configMapGenerator:
+  - name: proxy-config
+    files:
+      - alpha-config.yaml
+      # - error.html ( we don't have this yet. )
+      - sign_in.html
+  - name: general-config
+    envs:
+      - general-config.cfg

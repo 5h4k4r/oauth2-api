@@ -1,0 +1,36 @@
+upstreamConfig:
+  upstreams:
+    - id: api
+      path: /api/
+      rewriteTarget: /$1
+      uri: http://api:8081
+
+    - id: client
+      path: /
+      uri: http://http-svc:8888
+
+injectRequestHeaders:
+  - name: Authorization
+    preserveRequestValue: false
+    values:
+      - claim: access_token
+        prefix: "Bearer "
+server:
+  BindAddress: :4180
+
+providers:
+  - id: pis
+    provider: oidc
+    clientID: oauth-proxy-test
+    clientSecret: 123123 # Use envsubst
+    code_challenge_method: S256
+    profileUrl: https://auth.dev.krd/connect/userinfo
+    scope: openid profile roles email pis-insight
+    oidcConfig:
+      issuerUrl: https://auth.dev.krd
+      emailClaim: email
+      userIDClaim: sub
+      audienceClaims:
+        - aud
+      extraAudiences:
+        - pis-insight

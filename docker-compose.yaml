@@ -1,0 +1,66 @@
+# This docker-compose file can be used to bring up an example instance of oauth2-proxy
+# for manual testing and exploration of features.
+# Alongside OAuth2-Proxy, this file also starts Dex to act as the identity provider,
+# etcd for storage for Dex  and HTTPBin as an example upstream.
+#
+# This can either be created using docker-compose
+#    docker-compose -f docker-compose.yaml <command>
+# Or:
+#    make <command> (eg. make up, make down)
+#
+# Access http://localhost:4180 to initiate a login cycle
+version: '3.0'
+services:
+  oauth2-proxy:
+    container_name: oauth2-proxy
+    image: reg.dev.krd/common/oauth2-proxy-template:1.3-up7.4.0
+    command: --alpha-config=/alpha-config.yaml
+    environment:
+      OAUTH2_PROXY_EMAIL_DOMAINS: "*"
+      OAUTH2_PROXY_COOKIE_SECRET: "OQINaROshtE9TcZkNAm-5Zs2Pv3xaWyt"
+      OAUTH2_PROXY_REDIRECT_URL: http://localhost:4180/auth/callback
+      OAUTH2_PROXY_COOKIE_SECURE: false
+      OAUTH2_PROXY_REDIS_CONNECTION_URL: redis://oauth2-redis-master:6379/3
+      OAUTH2_PROXY_REDIS_PASSWORD: shakar
+      OAUTH2_PROXY_REDIS_USE_SENTINEL: false
+      OAUTH2_PROXY_# CODE_CHALLENGE_METHOD: "S256"
+      OAUTH2_PROXY_PORT: 4180
+      OAUTH2_PROXY_CLIENT_ID: oauth-proxy-test
+      OAUTH2_PROXY_CLIENT_SECRET: 123123
+      OAUTH2_PROXY_SCOPES: pis-insight
+
+      OAUTH2_PROXY_ISSUER_URL: https://auth.dev.krd
+      OAUTH2_PROXY_API_UPSTREAM: http://localhost:8080
+      OAUTH2_PROXY_CLIENT_UPSTREAM: https://google.com
+
+    ports:
+      - 4180:4180/tcp
+    hostname: oauth2-proxy
+    volumes:
+      - "./oauth2-proxy.cfg:/oauth2-proxy.cfg"
+      - "./alpha-config.yaml:/alpha-config.yaml"
+    restart: unless-stopped
+    depends_on:
+      - client
+  client:
+    build:
+      context: ../upn-check-client
+    ports:
+      - 3000:8888/tcp
+    restart: unless-stopped
+
+  redis:
+    image: redis:6.2-alpine
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass shakar
+    volumes:
+      - cache:/data
+  api:
+    build:
+      context: .
+    ports:
+      - '8080:8080'
+volumes:
+  cache:
+    driver: local
