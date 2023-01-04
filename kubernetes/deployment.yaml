@@ -36,11 +36,11 @@ spec:
 
         # Backend for Frontend
         - name: proxy
-          image: 5h4k4r/customized-oauth2-proxy:latest
-          # image: 5h4k4r/oauth2-proxy:latest
-          imagePullPolicy: Always
-          args:
-            - --alpha-config=/etc/oauth2-proxy/alpha-config.yaml
+          # image: 5h4k4r/customized-oauth2-proxy:latest
+          image: reg.dev.krd/common/oauth2-proxy-template:1.4.1-up.7.4.0
+          imagePullPolicy: Never
+          # args:
+          #   - --alpha-config=/etc/oauth2-proxy/alpha-config.yaml
           envFrom:
             # ========================
             # CONFIG MAPS
@@ -65,10 +65,10 @@ spec:
               cpu: 1000m
           ports:
             - containerPort: 4180
-          volumeMounts:
-            - mountPath: /etc/oauth2-proxy
-              name: proxy-config
-      volumes:
-        - name: proxy-config
-          configMap:
-            name: proxy-config
+      #     volumeMounts:
+      #       - mountPath: /etc/oauth2-proxy
+      #         name: proxy-config
+      # volumes:
+      #   - name: proxy-config
+      #     configMap:
+      #       name: proxy-config

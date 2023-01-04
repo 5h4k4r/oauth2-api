@@ -5,7 +5,7 @@ metadata:
   name: ingress
 
 spec:
-  ingressClassName: nginx
+  # ingressClassName: nginx
   rules:
     - host: nsl.localdev.me
       http:
