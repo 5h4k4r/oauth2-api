@@ -3,7 +3,9 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress
+
 spec:
+  ingressClassName: nginx
   rules:
     - host: nsl.localdev.me
       http:
@@ -14,3 +16,28 @@ spec:
           - path: /search
             pathType: Prefix
             backend: { service: { name: http-svc, port: { name: proxy } } }
+---
+# FIXME: Remember to add x-auth-request-redirect for sign_out endpoint to redirect the use to idenntity server logout page
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header X-Auth-Request-Redirect "https://auth.dev.krd/connect/endsession";
+  name: logout-ingress
+  labels:
+    name: logout-ingress
+
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: nsl.localdev.me
+      http:
+        paths:
+          - pathType: Prefix
+            path: "/auth/sign_out"
+            backend:
+              service:
+                name: http-svc
+                port:
+                  name: proxy
