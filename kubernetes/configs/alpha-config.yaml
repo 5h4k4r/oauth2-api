@@ -22,13 +22,13 @@ providers:
   - id: pis
     provider: oidc
     clientID: oauth-proxy-test
-    clientSecret: 123123 # Use envsubst
+    clientSecret: 123123
     code_challenge_method: S256
     profileUrl: https://auth.dev.krd/connect/userinfo
     scope: openid profile roles email pis-insight offline_access
     redeemURL: https://auth.dev.krd/connect/token
     oidcConfig:
-      insecureSkipNonce: false
+      insecureSkipNonce: true
       issuerUrl: https://auth.dev.krd
       emailClaim: email
       userIDClaim: sub
